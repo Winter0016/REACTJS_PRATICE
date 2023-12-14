@@ -3,7 +3,11 @@ import { useState,useEffect } from 'react';
 import Listname from './Listname';
 import Addname from './Addname';
 function App() {
-  const [Names, setNames] =  useState(JSON.parse(localStorage.getItem('listname')) || []);
+  const API_URL ='http://localhost:3500/Names';
+
+
+
+  const [Names, setNames] =  useState([]);
 
   const [newNames, setnewNames] = useState('');
 
@@ -12,10 +16,19 @@ function App() {
 
 // add useEffect: store Names array to storage whether there is a change in Names
   useEffect (() => {
-    console.log(`useEffect Name: ${JSON.stringify(Names)}`);
-    localStorage.setItem('listname', JSON.stringify(Names));
+    const fetchNames  = async() =>{
+      try{
+        const response = await fetch(API_URL);
+        const listNames = await response.json();
+        console.log(listNames);
+        setNames(listNames);
+      }catch(err){
+        console.log(err.stack)
+      }
+    }
+    fetchNames();
 
-  },[Names])
+  },[])
 
 
   const uppercase = (current_name) => {
