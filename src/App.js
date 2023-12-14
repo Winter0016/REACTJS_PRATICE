@@ -13,20 +13,30 @@ function App() {
 
   const [addNames , setaddNames ] = useState ('');
 
+  const [fetchError, setfetchError] = useState(null);
+
+  const [isloading,setisloading] =useState(true);
 
 // add useEffect: store Names array to storage whether there is a change in Names
   useEffect (() => {
     const fetchNames  = async() =>{
       try{
         const response = await fetch(API_URL);
+        if(!response.ok) throw Error("Did not receive expected data");
         const listNames = await response.json();
         console.log(listNames);
         setNames(listNames);
+        setfetchError(null);
       }catch(err){
-        console.log(err.stack)
+        setfetchError(err.message);
+      }finally{
+        setisloading(false);
       }
     }
-    fetchNames();
+  
+    setTimeout(() => {
+      (async () => await fetchNames())(); // or fetchNames();
+    }, 2000);
 
   },[])
 
@@ -94,11 +104,17 @@ function App() {
         handleSubmit={handleSubmit}
         Add_new_name={Add_new_name}
       />
-      <Listname
-        Names={Names}
-        setNames={setNames}
-        handleDelete={handleDelete}
-      />
+      <main>
+        {isloading && <p>Loading Names....</p>}
+        {fetchError && <p style={{color:"red"}}>{`Error : ${fetchError}`}</p>}
+        {!fetchError && !isloading &&
+          <Listname
+            Names={Names}
+            setNames={setNames}
+            handleDelete={handleDelete}
+          />
+        }
+      </main>
     </div>
   );
 }
