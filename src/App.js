@@ -12,9 +12,10 @@ function App() {
 
 // add useEffect: store Names array to storage whether there is a change in Names
   useEffect (() => {
+    console.log(`useEffect Name: ${JSON.stringify(Names)}`);
     localStorage.setItem('listname', JSON.stringify(Names));
 
-  },{Names})
+  },[Names])
 
 
   const uppercase = (current_name) => {
@@ -44,6 +45,7 @@ function App() {
 
   const handleDelete = (parameter) => {
     const listname = Names.filter((name) => name.id !== parameter);
+    console.log(`list after filter : ${JSON.stringify(listname)}`);
     setNames(listname);
   };
   const Add_new_name = (addNames) =>{
